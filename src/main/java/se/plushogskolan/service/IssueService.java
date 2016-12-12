@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import se.plushogskolan.model.Issue;
@@ -17,6 +18,7 @@ import se.plushogskolan.model.WorkItemStatus;
 import se.plushogskolan.repository.IssueRepository;
 import se.plushogskolan.repository.WorkItemRepository;
 
+@Component
 @Service
 public class IssueService {
 
@@ -44,6 +46,13 @@ public class IssueService {
 			throw new ServiceException("Create issue " + issue.getDescription() + " failed", e);
 		}
         
+	}
+	
+	@Transactional
+	public Issue createAndAssign(Issue issue, WorkItem workItem) {
+		Issue newIssue = createIssue(issue);
+		assignToWorkItem(newIssue, workItem);
+        return newIssue;
 	}
 
 	@Transactional
