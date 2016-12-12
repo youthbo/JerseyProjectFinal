@@ -15,7 +15,7 @@ import javax.ws.rs.core.UriInfo;
  * Created by daniel on 12/12/16.
  */
 @Component
-@Path("workitem")
+@Path("workitems")
 @Produces(MediaType.APPLICATION_JSON)
 public final class WorkItemResource {
 
