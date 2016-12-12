@@ -23,10 +23,7 @@ public class Team extends BaseEntity {
 		this.status = Status.ACTIVE.toString();
 	}
 
-	public Team(String name, String status) {
-		this.name = name;
-		this.status = Status.ACTIVE.toString();
-	}
+	
 
 	public String getName() {
 		return name;
