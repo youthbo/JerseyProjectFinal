@@ -8,6 +8,8 @@ import com.google.gson.JsonObject;
 
 import se.plushogskolan.model.WorkItem;
 import se.plushogskolan.model.WorkItemStatus;
+import se.plushogskolan.service.IssueService;
+import se.plushogskolan.service.ServiceException;
 import se.plushogskolan.service.WorkItemService;
 
 import java.net.URI;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 /**
  * Created by daniel on 12/12/16.
@@ -38,6 +41,9 @@ public final class WorkItemResource {
 
     @Autowired
     private WorkItemService workItemService;
+    
+    @Autowired
+    private IssueService issueService;
 
     @Context
     private UriInfo uriInfo;
@@ -91,18 +97,37 @@ public final class WorkItemResource {
      */
     @PUT
     @Path("{id}")
-    public Response updateStatus(@PathParam("id") String stringId, String reqBody){
+    public Response update(@PathParam("id") String stringId, String reqBody){
+    	
     	long id=Long.parseLong(stringId);
     	JsonObject jobj=new Gson().fromJson(reqBody,JsonObject.class);
-    	String status=jobj.get("status").toString();
-    	status=status.substring(1, status.length()-1);
-    	try{
-			WorkItemStatus.valueOf(status);
-    	}catch(IllegalArgumentException e){
-    		return Response.status(400).type(MediaType.TEXT_PLAIN).entity("Status has to be either of: Started, Unstarted or Done.").build();
+    	
+    	if (jobj.has("status")){
+    		
+    		String status=jobj.get("status").toString();
+	    	status=status.substring(1, status.length()-1);
+	    	try{
+				WorkItemStatus.valueOf(status);
+	    	}catch(IllegalArgumentException e){
+	    		return Response.status(400).type(MediaType.TEXT_PLAIN).entity("Status has to be either of: Started, Unstarted or Done.").build();
+	    	}
+	    	workItemService.updateStatus(id, WorkItemStatus.valueOf(status));
+	    	return Response.ok(workItemService.findById(id)).build();
     	}
-    	workItemService.updateStatus(id, WorkItemStatus.valueOf(status));
-    	return Response.ok().build();
+    	else if(jobj.has("issue")){
+    		String issue=jobj.get("issue").toString();
+	    	issue= issue.substring(1, issue.length()-1);
+	    	WorkItem workItem = workItemService.findById(id);
+	    	try{
+    		   issueService.assignToWorkItem(issueService.getIssueByName(issue), workItem);
+	    	}catch(ServiceException e){
+	    		return Response.status(400)
+	    				.entity("The status of workitem is not 'Done' ").build();
+	    	}
+	    	return Response.ok(workItem).build();
+    	}else {
+    		return Response.status(Status.BAD_REQUEST).build();
+    	} 	    	
     }
     
     

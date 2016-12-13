@@ -48,7 +48,7 @@ public class IssueService {
 	}
 
 	@Transactional
-	public void assignToWorkItem(Issue issue, WorkItem workItem) {
+	public void assignToWorkItem(Issue issue, WorkItem workItem) throws ServiceException {
 		WorkItem newWorkItem = workItem;
 		Issue newIssue=issue;
 		try {

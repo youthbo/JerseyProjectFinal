@@ -33,6 +33,13 @@ public class IssueResource {
 	@Context
 	private UriInfo uriInfo;
 
+	/**
+	 *URL:.../issues 
+	 *body:
+	 *  {
+	 *    "description":"issue2"
+     *  } 
+	 */
 	@POST
 	public Response create(Issue issue){
 		try{
@@ -44,6 +51,13 @@ public class IssueResource {
 		return Response.created(location).build();
 	}
 	
+	/**
+	 *URL:.../issues/id 
+	 *body:
+	 *  {
+	 *    "description":"issue2"
+     *  } 
+	 */
 	@PUT
 	@Path("{id}")
 	public Response update(Issue issue,@PathParam("id") Long id){	
