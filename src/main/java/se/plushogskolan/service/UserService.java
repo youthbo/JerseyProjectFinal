@@ -21,6 +21,7 @@ import se.plushogskolan.repository.WorkItemRepository;
 
 @Service
 public class UserService {
+	
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -28,7 +29,6 @@ public class UserService {
 	@Autowired
 	private WorkItemRepository workItemRepository;
 
-	
 	public UserService(UserRepository userRepository, TeamRepository teamRepository,
 			WorkItemRepository workItemRepository) {
 		this.userRepository = userRepository;
@@ -109,7 +109,7 @@ public class UserService {
 		return userRepository.save(user);
 	}
 	
-	public List<User> findAllUsers(int page,int amount){
+	public List<User> findAllUsers(int page, int amount){
 		Pageable pageable = new PageRequest(page,amount,Sort.Direction.ASC,"firstname","lastname");
 		return userRepository.findAll(pageable).getContent();
 	}

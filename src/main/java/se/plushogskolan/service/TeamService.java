@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import se.plushogskolan.service.ServiceException;
@@ -16,6 +17,7 @@ import se.plushogskolan.repository.TeamRepository;
 import se.plushogskolan.repository.UserRepository;
 
 @Service
+@Component
 public class TeamService {
 	@Autowired
 	private TeamRepository teamRepository;
@@ -27,7 +29,7 @@ public class TeamService {
 		this.userRepository = userRepository;
 	}
 
-	//used in testConfig file, for autowired in test
+	// used in testConfig file, for autowired in test
 	public TeamService() {
 	}
 
@@ -35,7 +37,7 @@ public class TeamService {
 	public Team createTeam(Team team) {
 		try {
 			if (team.getId() == null) {
-
+				team.setStatus(Status.ACTIVE.toString());
 				return teamRepository.save(team);
 
 			} else {
@@ -48,31 +50,31 @@ public class TeamService {
 	}
 
 	public Iterable<Team> findAllTeams() {
-			return teamRepository.findAll();
+		return teamRepository.findAll();
 	}
 
 	public Team findByName(String teamName) {
-			Team team = teamRepository.findByName(teamName);
-			return team;
+		Team team = teamRepository.findByName(teamName);
+		return team;
 	}
 
 	@Transactional
-	public void uppdateTeam(String oldName, String newName) {
+	public void uppdateTeam(Long id, String newName, String newStatus) {
 		try {
-			Team oldTeam = teamRepository.findByName(oldName);
-			if (oldTeam != null) {
+			Team team = teamRepository.findOne(id);
+			if (newName != null) {
 				Team newTeam = teamRepository.findByName(newName);
 				if (newTeam == null) {
-					oldTeam.setName(newName);
-					teamRepository.save(oldTeam);
-				} else {
-					throw new ServiceException("Team with this teamname " + newName + " exists");
-
+					team.setName(newName);
 				}
-			} else {
-				throw new ServiceException("Team with this teamname: " + oldName + "NOT exists");
-			}
+			} else if (newStatus != null) {
+				team.setStatus(newStatus);
 
+			} else {
+				throw new ServiceException("Team with this teamname " + newName + " exists");
+
+			}
+			teamRepository.save(team);
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not update team", e);
 		}

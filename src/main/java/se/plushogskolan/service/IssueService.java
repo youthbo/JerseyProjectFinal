@@ -33,21 +33,22 @@ public class IssueService {
 	}
 
 	@Transactional
-	public Issue createIssue(Issue issue) {
-		try {
-		  if (issue.getId()==null){		 
-			return issueRepository.save(issue);
-		  }else{
-		  	  throw new ServiceException("Create issue " + issue.getDescription() + " failed. Issue already exists");
-		  }
-		} catch (DataAccessException e) {
-			throw new ServiceException("Create issue " + issue.getDescription() + " failed", e);
-		}
-        
+	public Issue createIssue(Issue issue) throws ServiceException {
+			 if (issueRepository.findByDescription(issue.getDescription())==null){
+			   return issueRepository.save(issue);
+			 }else
+			   throw new ServiceException("Create issue failed. Issue:"+issue.getDescription()+" already exists.");
+	}
+	
+	@Transactional
+	public Issue createAndAssign(Issue issue, WorkItem workItem) {
+		Issue newIssue = createIssue(issue);
+		assignToWorkItem(newIssue, workItem);
+        return newIssue;
 	}
 
 	@Transactional
-	public void assignToWorkItem(Issue issue, WorkItem workItem) {
+	public void assignToWorkItem(Issue issue, WorkItem workItem) throws ServiceException {
 		WorkItem newWorkItem = workItem;
 		Issue newIssue=issue;
 		try {
@@ -71,22 +72,14 @@ public class IssueService {
 	}
 
 	@Transactional
-	public Issue updateIssue(Issue issue, String new_description) {
-		try {
-			Issue newIssue=issue;
-			if (issue.getId()==null){
-				newIssue = issueRepository.save(issue);
-			}
+	public Issue updateIssue(Issue issue, String new_description) throws ServiceException {		
 			Issue findIssue = issueRepository.findByDescription(new_description);
 			if (findIssue == null) {
-				newIssue.setDescription(new_description);
-				issueRepository.save(newIssue);
-				return newIssue;
+				issue.setDescription(new_description);
+				issueRepository.save(issue);
+				return issue;
 			} else
-				throw new ServiceException("Issue with name:" + new_description + " already exists.");
-		} catch (DataAccessException e) {
-			throw new ServiceException("Could not update issue with id:" + issue.getId(), e);
-		}
+				throw new ServiceException("Issue with name:" + new_description + " already exists.");		
 	}
 
 	public List<WorkItem> getAllItemsWithIssue(Issue issue) {
