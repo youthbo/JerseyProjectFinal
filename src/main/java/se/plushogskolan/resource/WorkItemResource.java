@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -87,15 +86,4 @@ public final class WorkItemResource {
     	long id=Long.parseLong(stringId);
     	return Response.ok(workItemService.delete(id)).build();
     }
-    
-//    @PUT
-//    @Path("{id}")
-//    public Response addWorkItemToUser(@PathParam("id") String stringId, String reqBody){
-//    	long id=Long.parseLong(stringId);
-//    	JsonObject jobj=new Gson().fromJson(reqBody,JsonObject.class);
-//    	String status=jobj.get("workItemId").toString();
-//    	status=status.substring(1, status.length()-1);
-//    	workItemService.updateStatus(id, WorkItemStatus.valueOf(status));
-//    	return Response.ok().build();
-//    }
 }
