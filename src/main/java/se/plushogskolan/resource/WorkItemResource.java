@@ -57,6 +57,11 @@ public final class WorkItemResource {
     private HttpHeaders httpHeaders;
 
 
+    /**
+     * Url: /workitems/status?criteria=
+     * @param status
+     * @return
+     */
     @GET
     @Path("status")
     public Response getAllByStatus(@QueryParam("criteria") @DefaultValue("") String status) {
@@ -64,6 +69,11 @@ public final class WorkItemResource {
         return Response.ok(new Gson().toJson(workItems)).build();
     }
 
+    /**
+     * Url: /workitems/team?criteria=
+     * @param team
+     * @return
+     */
     @GET
     @Path("team")
     public Response getAllByTeam(@QueryParam("criteria") @DefaultValue("") String team) {
@@ -71,6 +81,11 @@ public final class WorkItemResource {
         return Response.ok(new Gson().toJson(workItems)).build();
     }
 
+    /**
+     * Url: /workitems/user?criteria=
+     * @param userid
+     * @return
+     */
     @GET
     @Path("user")
     public Response getAllByUser(@QueryParam("criteria") Long userid) {
@@ -78,6 +93,11 @@ public final class WorkItemResource {
         return Response.ok(new Gson().toJson(workItems)).build();
     }
 
+    /**
+     * Url: /workitems/text?criteria=
+     * @param text
+     * @return
+     */
     @GET
     @Path("text")
     public Response getAllByUser(@QueryParam("criteria") @DefaultValue("") String text) {
