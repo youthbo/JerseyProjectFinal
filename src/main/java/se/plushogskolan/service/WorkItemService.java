@@ -17,7 +17,6 @@ import se.plushogskolan.model.WorkItem;
 import se.plushogskolan.model.WorkItemStatus;
 import se.plushogskolan.repository.WorkItemRepository;
 
-@Component
 @Service
 public class WorkItemService {
 	@Autowired
