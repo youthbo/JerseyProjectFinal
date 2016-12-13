@@ -3,7 +3,6 @@ package se.plushogskolan.resource;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -83,13 +82,10 @@ public final class UserResource {
 	}
 
 	/**
-	 * 
 	 * @param page
 	 * @param size
 	 * 
-	 *            uri: .../users
-	 * 
-	 *            hämtar alla users
+	 *            uri: .../users hämtar alla users
 	 */
 	@GET
 	public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
