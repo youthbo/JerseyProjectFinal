@@ -29,6 +29,10 @@ public class WorkItemService {
 		this.workItemRepository = workItemRepository;
 	}
 
+	public WorkItem findById(Long id){
+		return workItemRepository.findOne(id);
+	}
+	
 	public List<WorkItem> findAllByTeamName(String name){
 		return workItemRepository.findAllByTeamName(name);
 	}

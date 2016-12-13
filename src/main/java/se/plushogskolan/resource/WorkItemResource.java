@@ -6,10 +6,14 @@ import org.springframework.stereotype.Component;
 import se.plushogskolan.model.WorkItem;
 import se.plushogskolan.service.WorkItemService;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -36,9 +40,22 @@ public final class WorkItemResource {
     private HttpHeaders httpHeaders;
 
     @GET
-    public Response create(){
-    	System.out.println("check");
-    	return Response.ok().build();
+    @Path("{id}")
+    public Response get(@PathParam("id") String stringId){
+    	long id=Long.parseLong(stringId);
+    	return Response.ok(workItemService.findById(id)).build();
+    }
+    
+    @POST
+    public Response create(WorkItem workItem){
+    	workItem=workItemService.create(workItem);
+    	URI location=null;
+		try {
+			location = new URI("workitems/"+workItem.getId());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+    	return Response.created(location).build();
     }
 
 }
