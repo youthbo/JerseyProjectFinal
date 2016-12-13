@@ -89,7 +89,7 @@ public final class WorkItemResource {
     /**
      * Url: /workitems/123
      * Method: Put
-     * Request body parameter: status
+     * Request body parameter: status or issue description
      * 
      * @param stringId
      * @param reqBody
