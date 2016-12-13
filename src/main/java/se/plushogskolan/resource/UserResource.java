@@ -32,6 +32,16 @@ public class UserResource {
     @Autowired
     private WorkItemService workItemService;
 
+    
+    /**
+     * Url: /users/123
+     * Method: Put
+     * Request body parameter: workItemId
+     * 
+     * @param stringId
+     * @param reqBody
+     * @return
+     */
     @PUT
     @Path("{id}")
     public Response addWorkItemToUser(@PathParam("id") String stringId, String reqBody){

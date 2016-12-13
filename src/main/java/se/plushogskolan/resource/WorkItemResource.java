@@ -45,6 +45,13 @@ public final class WorkItemResource {
     @Context
     private HttpHeaders httpHeaders;
 
+    /**
+     * Url: /workitems/123
+     * Method: Get
+     * 
+     * @param stringId
+     * @return
+     */
     @GET
     @Path("{id}")
     public Response get(@PathParam("id") String stringId){
@@ -52,6 +59,14 @@ public final class WorkItemResource {
     	return Response.ok(workItemService.findById(id)).build();
     }
     
+    /**
+     * Url: /workitems
+     * Method: Post
+     * Request body parameter: workitem json string
+     * 
+     * @param workItem
+     * @return
+     */
     @POST
     public Response create(WorkItem workItem){
     	workItem=workItemService.create(workItem);
@@ -64,6 +79,16 @@ public final class WorkItemResource {
     	return Response.created(location).build();
     }
 
+    
+    /**
+     * Url: /workitems/123
+     * Method: Put
+     * Request body parameter: status
+     * 
+     * @param stringId
+     * @param reqBody
+     * @return
+     */
     @PUT
     @Path("{id}")
     public Response updateStatus(@PathParam("id") String stringId, String reqBody){
@@ -80,6 +105,14 @@ public final class WorkItemResource {
     	return Response.ok().build();
     }
     
+    
+    /**
+     * Url: /workitems/123
+     * Method: Delete
+     * 
+     * @param stringId
+     * @return
+     */
     @DELETE
     @Path("{id}")
     public Response updateStatus(@PathParam("id") String stringId){
