@@ -8,9 +8,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import se.plushogskolan.model.Issue;
 import se.plushogskolan.service.IssueService;
+import se.plushogskolan.service.ServiceException;
 
 @Component
 @Path("issues")
@@ -30,17 +33,39 @@ public class IssueResource {
 	@Context
 	private UriInfo uriInfo;
 
+	/**
+	 *URL:.../issues 
+	 *body:
+	 *  {
+	 *    "description":"issue2"
+     *  } 
+	 */
 	@POST
 	public Response create(Issue issue){
-		issueService.createIssue(issue);		
+		try{
+		    issueService.createIssue(issue);
+		}catch(ServiceException e){
+			throw new WebApplicationException("Issue already exists!",Status.CONFLICT);
+		}
 		URI location = uriInfo.getAbsolutePathBuilder().path(IssueResource.class, "update").build(issue.getId());
 		return Response.created(location).build();
 	}
 	
+	/**
+	 *URL:.../issues/id 
+	 *body:
+	 *  {
+	 *    "description":"issue2"
+     *  } 
+	 */
 	@PUT
 	@Path("{id}")
 	public Response update(Issue issue,@PathParam("id") Long id){	
-		issueService.updateIssue(issueService.getIssueById(id), issue.getDescription());
+		try{
+		    issueService.updateIssue(issueService.getIssueById(id), issue.getDescription());
+		}catch(ServiceException e){
+			throw new WebApplicationException("Description already exists!",Status.CONFLICT);
+		}
 		return Response.ok(issue).build();
 	}
 	

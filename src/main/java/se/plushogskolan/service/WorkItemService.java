@@ -17,7 +17,6 @@ import se.plushogskolan.model.WorkItem;
 import se.plushogskolan.model.WorkItemStatus;
 import se.plushogskolan.repository.WorkItemRepository;
 
-@Component
 @Service
 public class WorkItemService {
 	@Autowired
@@ -29,6 +28,10 @@ public class WorkItemService {
 		this.workItemRepository = workItemRepository;
 	}
 
+	public WorkItem findById(Long id){
+		return workItemRepository.findOne(id);
+	}
+	
 	public List<WorkItem> findAllByTeamName(String name){
 		return workItemRepository.findAllByTeamName(name);
 	}
