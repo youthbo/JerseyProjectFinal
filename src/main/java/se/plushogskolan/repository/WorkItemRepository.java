@@ -13,7 +13,7 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 
 	List<WorkItem> findAllByStatus(String status);
 
-	List<WorkItem> findAllByUser(long userId);
+	List<WorkItem> findAllByUserId(long userId);
 
 	List<WorkItem> findAllByUser(User user);
 
@@ -23,4 +23,5 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 
 	@Query("select w from WorkItem w where w.user.team.name=:teamName")
 	List<WorkItem> findAllByTeamName(@Param("teamName") String teamName);
+
 }

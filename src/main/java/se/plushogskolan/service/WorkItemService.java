@@ -38,7 +38,7 @@ public class WorkItemService {
 
 	
 	public List<WorkItem> findAllByUser(Long userId){
-		return this.workItemRepository.findAllByUser(userId);
+		return this.workItemRepository.findAllByUserId(userId);
 	}
 
 	
