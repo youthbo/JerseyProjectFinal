@@ -51,15 +51,14 @@ public final class UserResource {
 	private UriInfo uriInfo;
 
 	/**
+	 * uri: .../users
+	 * 
+	 * man får skicka "teamname" i http json body:n. Om redan finns ett team med
+	 * det här namnet hämtas teamet och skickas sätts till user. Om inget team
+	 * mead det här namnet finns då skapas ett team med namnet och sätts till
+	 * user.
+	 * 
 	 * @param size
-	 * 
-	 *            uri: .../users
-	 * 
-	 *            man får skicka "teamname" i http json body:n. Om redan finns
-	 *            ett team med det här namnet hämtas teamet och skickas sätts
-	 *            till user. Om inget team mead det här namnet finns då skapas
-	 *            ett team med namnet och sätts till user.
-	 * 
 	 */
 	@POST
 	public Response addUser(String body) {
@@ -82,32 +81,99 @@ public final class UserResource {
 	}
 
 	/**
+	 * uri: .../users/p hämtar alla users pagenerad
+	 * 
 	 * @param page
 	 * @param size
-	 * 
-	 *            uri: .../users hämtar alla users
 	 */
 	@GET
+	@Path("p")
 	public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
 			@QueryParam("size") @DefaultValue("10") int size) {
 
 		List<User> users = userService.findAllUsers(page, size);
-		// customers = customers.subList(0, Math.min(customers.size(), size));
-		// customers.sort((c1, c2) -> sort.equalsIgnoreCase("desc") ?
-		// Long.compare(c1.getId(), c2.getId())
-		// : Long.compare(c2.getId(), c1.getId()));
-
 		return Response.ok(users).build();
 	}
 
+	/**
+	 * uri: .../users?key=value
+	 * 
+	 * om man skickar flera parametrar metoden tar den första som matchar och struntar i 
+	 * de andra! notera att ordning är viktigt, dvs om ni skickar id=1&name=iman metoden 
+	 * tar id, men om ni skickar name=iman&id=1 den tar namnet och skiter i id:n! 
+	 * 
+	 * @param id (id här är BaseEntitys autogenererad id, d.v.s location som
+	 * skickas tillbaka med Respond från POST)
+	 * 
+	 * @param fname
+	 * @param lname
+	 * @param username
+	 * @param usernumber
+	 * @param teamname
+	 * @return
+	 */
 	@GET
-	@Path("{id}")
-	public Response getUser(@PathParam("id") Long id) {
-		User user = userService.getUser(id);
-		if (user == null) {
-			return Response.status(Status.NOT_FOUND).build();
+	public Response getUser(@QueryParam("id") Long id, @QueryParam("fname") String fname,
+			@QueryParam("lname") String lname, @QueryParam("username") String username,
+			@QueryParam("usernumber") String usernumber, @QueryParam("team") String teamname) {
+
+		if (id != null) {
+			
+			User user = userService.getUser(id);
+			if (user == null) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(user).build();
+
+		} else if (fname != null) {
+			
+			List<User> users = userService.getUserByFirstname(fname);
+			if (users.size() == 0) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(users).build();
+
+		} else if (lname != null) {
+			
+			List<User> users = userService.getUserByLastname(lname);
+			if (users.size() == 0) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(users).build();
+
+		} else if (username != null) {
+			
+			User user = userService.getUserByUsername(username);
+			if (user == null) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(user).build();
+
+		} else if (usernumber != null) {
+			
+			User user = userService.getUserByUsernumber(usernumber);
+			if (user == null) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(user).build();
+
+		} else if (teamname != null) {
+			
+			Team team = teamService.findByName(teamname);
+			List<User> users = userService.getAllUsersInTeam(team);
+			if (users.size() == 0) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(users).build();
+			
+		} else {
+			
+			List<User> users = userService.getAllUsers();
+			if (users.size() == 0) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			return Response.ok(users).build();
 		}
-		return Response.ok(user).build();
 	}
 
 	/**
