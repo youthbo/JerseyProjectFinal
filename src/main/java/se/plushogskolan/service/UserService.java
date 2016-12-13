@@ -47,6 +47,10 @@ public class UserService {
 	public User getUserByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
+	
+	public User getUserByUsernumber(String usernumber) {
+		return userRepository.findByUsernumber(usernumber);
+	}
 
 	public List<User> getUserByFirstname(String firstname) {
 		return userRepository.findByFirstname(firstname);
@@ -114,4 +118,7 @@ public class UserService {
 		return userRepository.findAll(pageable).getContent();
 	}
 
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
+	}
 }
