@@ -245,7 +245,6 @@ public final class UserResource {
 		// addWorkItemToUser
 		if (jobj.has("workItemId")) {
 
-			System.out.println("workItem");
 			Long workItemId = jobj.get("workItemId").getAsLong();
 			WorkItem workItem = workItemService.findById(workItemId);
 			workItemService.addWorkItemToUser(workItem, user);
