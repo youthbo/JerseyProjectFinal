@@ -1,25 +1,9 @@
 package se.plushogskolan.resource;
 
-import com.google.gson.Gson;
-import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
-import com.sun.xml.internal.ws.util.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import se.plushogskolan.model.WorkItem;
-import se.plushogskolan.model.WorkItemStatus;
-import se.plushogskolan.service.WorkItemService;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.List;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import se.plushogskolan.model.WorkItem;
-import se.plushogskolan.model.WorkItemStatus;
-import se.plushogskolan.service.IssueService;
-import se.plushogskolan.service.ServiceException;
-import se.plushogskolan.service.WorkItemService;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,12 +12,26 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.sun.xml.internal.ws.util.StringUtils;
+
+import se.plushogskolan.model.WorkItem;
+import se.plushogskolan.model.WorkItemStatus;
+import se.plushogskolan.service.IssueService;
+import se.plushogskolan.service.ServiceException;
+import se.plushogskolan.service.WorkItemService;
 
 /**
  * Created by daniel on 12/12/16.
@@ -49,13 +47,6 @@ public final class WorkItemResource {
     
     @Autowired
     private IssueService issueService;
-
-    @Context
-    private UriInfo uriInfo;
-
-    @Context
-    private HttpHeaders httpHeaders;
-
 
     /**
      *
@@ -137,8 +128,7 @@ public final class WorkItemResource {
     	
     	if (jobj.has("status")){
     		
-    		String status=jobj.get("status").toString();
-	    	status=status.substring(1, status.length()-1);
+    		String status=jobj.get("status").getAsString();
 	    	try{
 				WorkItemStatus.valueOf(status);
 	    	}catch(IllegalArgumentException e){
@@ -147,9 +137,8 @@ public final class WorkItemResource {
 	    	workItemService.updateStatus(id, WorkItemStatus.valueOf(status));
 	    	return Response.ok(workItemService.findById(id)).build();
     	}
-    	else if(jobj.has("issue")){
-    		String issue=jobj.get("issue").toString();
-	    	issue= issue.substring(1, issue.length()-1);
+    	if(jobj.has("issue")){
+    		String issue=jobj.get("issue").getAsString();
 	    	WorkItem workItem = workItemService.findById(id);
 	    	try{
     		   issueService.assignToWorkItem(issueService.getIssueByName(issue), workItem);
