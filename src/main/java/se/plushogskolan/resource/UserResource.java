@@ -17,25 +17,21 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import se.plushogskolan.model.Team;
 import se.plushogskolan.model.User;
 import se.plushogskolan.model.WorkItem;
-import se.plushogskolan.model.WorkItemStatus;
-import se.plushogskolan.service.ServiceException;
 import se.plushogskolan.service.TeamService;
 import se.plushogskolan.service.UserService;
 import se.plushogskolan.service.WorkItemService;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.sun.xml.internal.ws.util.StringUtils;
 
 @Component
 @Path("users")

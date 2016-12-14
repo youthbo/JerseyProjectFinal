@@ -1,11 +1,6 @@
 package se.plushogskolan.resource;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,10 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
 
 import se.plushogskolan.model.Team;
 import se.plushogskolan.service.TeamService;
