@@ -88,4 +88,8 @@ public final class User extends BaseEntity {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
 }

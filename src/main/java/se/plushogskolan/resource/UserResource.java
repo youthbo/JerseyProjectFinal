@@ -33,6 +33,7 @@ import se.plushogskolan.service.UserService;
 import se.plushogskolan.service.WorkItemService;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.xml.internal.ws.util.StringUtils;
 
@@ -174,6 +175,7 @@ public final class UserResource {
 	/**
 	 *
 	 * Url: /users?filter=<Type of search>&criteria=<Search criteria>
+	 * if no filter specified, all users returned.
 	 * 
 	 * @param filter
 	 * @param criteria
@@ -185,6 +187,12 @@ public final class UserResource {
 
 		List<User> users = new ArrayList<>();
 		User user = null;
+		
+		if (filter == null) {
+			users = userService.getAllUsers();
+			return Response.ok(users).build();
+		}
+		
 		switch (filter) {
 		case "id":
 			user = userService.getUser(Long.parseLong(criteria));
@@ -218,19 +226,13 @@ public final class UserResource {
 		}
 	}
 
-	@PUT
-	@Path("update/{id}")
-	public Response updateUser(@PathParam("id") Long id, User user) {
-		System.out.println(user);
-		User userHamtad = userService.getUser(id);
-		userHamtad.setFirstname(user.getFirstname());
-		userService.updateUser(userHamtad);
-		// JsonObject obj = new Gson().fromJson(body, JsonObject.class);
-		return Response.ok().build();
-	}
-
 	/**
-	 * Url: /users/123 Method: Put Request body parameter: workItemId
+	 * Url: /users/123 
+	 * Method: Put 
+	 * Request body parameter:  "workItemId" : 123 || 
+	 * 							"update" : true ||
+	 * 							"deactivate" : true ||
+	 * 							"activate" : true 
 	 * 
 	 * @param stringId
 	 * @param reqBody
@@ -248,33 +250,32 @@ public final class UserResource {
 		if (jobj.has("workItemId")) {
 
 			System.out.println("workItem");
-
-			String workItemIdString = jobj.get("workItemId").toString();
-			// workItemIdString = workItemIdString.substring(1,
-			// workItemIdString.length() - 1);
-			long workItemId = Long.parseLong(workItemIdString);
+			Long workItemId = jobj.get("workItemId").getAsLong();
 			WorkItem workItem = workItemService.findById(workItemId);
 			workItemService.addWorkItemToUser(workItem, user);
 			return Response.ok().build();
 
-		} else if (jobj.has("deactivate")) {
-
-			if (jobj.get("deactivate").equals("true"))
-				userService.deactivateUser(user);
-
+		} else if (jobj.has("deactivate") && jobj.get("deactivate").getAsBoolean()) {
+			
+			userService.deactivateUser(user);
 			return Response.ok().build();
 
-		} else if (jobj.has("activate")) {
+		} else if (jobj.has("activate") && jobj.get("activate").getAsBoolean()) {
 
-			if (jobj.get("activate").equals("true"))
-				userService.activateUser(user);
-
+			userService.activateUser(user);
 			return Response.ok().build();
 
-		} else if (jobj.has("update")) {
-
-			return Response.ok().build();
-
+		} else if (jobj.has("update") && jobj.get("update").getAsBoolean()) {
+			
+			String firstname = jobj.get("firstname").getAsString();
+			String lastname = jobj.get("lastname").getAsString();
+			String username = jobj.get("username").getAsString();
+			user.setFirstname(firstname);
+			user.setLastname(lastname);
+			user.setUsername(username);
+			userService.updateUser(user);
+			return Response.ok().build(); 
+			
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
