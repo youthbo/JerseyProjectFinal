@@ -58,9 +58,11 @@ public final class WorkItemResource {
 
 
     /**
-     * Url: /workitems/?filter=<Type of search>&criteria=<Search criteria>
+     *
+     * Url: /workitems?filter=<Type of search>&criteria=<Search criteria>
      * @param filter
      * @param  criteria
+     * @author Daniel
      * @return
      */
     @GET
