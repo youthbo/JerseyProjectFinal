@@ -58,50 +58,24 @@ public final class WorkItemResource {
 
 
     /**
-     * Url: /workitems/status?criteria=
+     * Url: /workitems/?filter=<Type of search>typeOfSearch>&criteria=<Search criteria>
      * @param status
      * @return
      */
     @GET
-    @Path("status")
-    public Response getAllByStatus(@QueryParam("criteria") @DefaultValue("") String status) {
-        List<WorkItem> workItems = workItemService.findAllByStatus(WorkItemStatus.valueOf(StringUtils.capitalize(status)));
-        return Response.ok(new Gson().toJson(workItems)).build();
-    }
-
-    /**
-     * Url: /workitems/team?criteria=
-     * @param team
-     * @return
-     */
-    @GET
-    @Path("team")
-    public Response getAllByTeam(@QueryParam("criteria") @DefaultValue("") String team) {
-        List<WorkItem> workItems = workItemService.findAllByTeamName(team);
-        return Response.ok(new Gson().toJson(workItems)).build();
-    }
-
-    /**
-     * Url: /workitems/user?criteria=
-     * @param userid
-     * @return
-     */
-    @GET
-    @Path("user")
-    public Response getAllByUser(@QueryParam("criteria") Long userid) {
-        List<WorkItem> workItems = workItemService.findAllByUser(userid);
-        return Response.ok(new Gson().toJson(workItems)).build();
-    }
-
-    /**
-     * Url: /workitems/text?criteria=
-     * @param text
-     * @return
-     */
-    @GET
-    @Path("text")
-    public Response getAllByUser(@QueryParam("criteria") @DefaultValue("") String text) {
-        List<WorkItem> workItems = workItemService.findByDescriptionContaining(text);
+    public Response getAllByStatus(@QueryParam("filter") String filter, @QueryParam("criteria")String status) {
+        List<WorkItem> workItems=null;
+        try {
+            switch(filter){
+                case "status": workItems = workItemService.findAllByStatus(WorkItemStatus.valueOf(StringUtils.capitalize(status))); break;
+                case "team": workItems = workItemService.findAllByTeamName(StringUtils.capitalize(status)); break;
+                case "user": workItems = workItemService.findAllByUser(new Long(status)); break;
+                case "text": workItems = workItemService.findByDescriptionContaining(StringUtils.capitalize(status)); break;
+                default: throw new Exception();
+            }
+        } catch (Exception e) { //This will be changed later to something more suitable for a jaxrs environment
+            e.printStackTrace();
+        }
         return Response.ok(new Gson().toJson(workItems)).build();
     }
 

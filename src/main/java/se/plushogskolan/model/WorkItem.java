@@ -70,5 +70,4 @@ public class WorkItem extends BaseEntity {
 		this.user = user;
 	}
 
-	
 }
