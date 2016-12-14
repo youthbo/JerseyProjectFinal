@@ -59,42 +59,28 @@ public final class WorkItemResource {
 
     /**
      * Url: /workitems/?filter=<Type of search>&criteria=<Search criteria>
-     * @param status
+     * @param filter
+     * @param  criteria
      * @return
      */
     @GET
-    public Response getAllByStatus(@QueryParam("filter") String filter, @QueryParam("criteria")String status) {
+    public Response getWorkItemsBy(@QueryParam("filter") String filter, @QueryParam("criteria")String criteria) {
         List<WorkItem> workItems=null;
         try {
             switch(filter){
-                case "status": workItems = workItemService.findAllByStatus(WorkItemStatus.valueOf(StringUtils.capitalize(status))); break;
-                case "team": workItems = workItemService.findAllByTeamName(StringUtils.capitalize(status)); break;
-                case "user": workItems = workItemService.findAllByUser(new Long(status)); break;
-                case "text": workItems = workItemService.findByDescriptionContaining(StringUtils.capitalize(status)); break;
+                case "status": workItems = workItemService.findAllByStatus(WorkItemStatus.valueOf(StringUtils.capitalize(criteria))); break;
+                case "team": workItems = workItemService.findAllByTeamName(StringUtils.capitalize(criteria)); break;
+                case "user": workItems = workItemService.findAllByUser(new Long(criteria)); break;
+                case "text": workItems = workItemService.findByDescriptionContaining(StringUtils.capitalize(criteria)); break;
+                case "issue": workItems = issueService.getAllItemsWithIssue(issueService.getIssueById(Long.parseLong(criteria))); break;
                 default: throw new Exception();
             }
         } catch (Exception e) { //This will be changed later to something more suitable for a jaxrs environment
-            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).entity("Query parameter format is wrong.").build();
         }
-        return Response.ok(new Gson().toJson(workItems)).build();
+        return Response.ok(workItems).build();
     }
 
-    /**
-     * Url: /workitems/issue?id=
-     * @param status
-     * @return
-     */
-    @GET
-    @Path("issue")
-    public Response getAllByIssue(@QueryParam("id") String id) {
-    	try{
-    		List<WorkItem> workItems = issueService.getAllItemsWithIssue(issueService.getIssueById(Long.parseLong(id)));
-    		return Response.ok(workItems).build();
-    	}catch(NumberFormatException e){
-    		return Response.status(Status.BAD_REQUEST).entity("Query parameter format is wrong.").build();
-    	}
-        
-    }
     
     /**
      * Url: /workitems/123
