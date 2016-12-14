@@ -80,6 +80,23 @@ public final class WorkItemResource {
     }
 
     /**
+     * Url: /workitems/issue?id=
+     * @param status
+     * @return
+     */
+    @GET
+    @Path("issue")
+    public Response getAllByIssue(@QueryParam("id") String id) {
+    	try{
+    		List<WorkItem> workItems = issueService.getAllItemsWithIssue(issueService.getIssueById(Long.parseLong(id)));
+    		return Response.ok(workItems).build();
+    	}catch(NumberFormatException e){
+    		return Response.status(Status.BAD_REQUEST).entity("Query parameter format is wrong.").build();
+    	}
+        
+    }
+    
+    /**
      * Url: /workitems/123
      * Method: Get
      * 
@@ -168,7 +185,7 @@ public final class WorkItemResource {
      */
     @DELETE
     @Path("{id}")
-    public Response updateStatus(@PathParam("id") String stringId){
+    public Response delete(@PathParam("id") String stringId){
     	long id=Long.parseLong(stringId);
     	return Response.ok(workItemService.delete(id)).build();
     }
