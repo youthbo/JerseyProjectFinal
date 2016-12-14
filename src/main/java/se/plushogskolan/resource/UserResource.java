@@ -1,6 +1,7 @@
 package se.plushogskolan.resource;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,16 +26,19 @@ import org.springframework.stereotype.Component;
 import se.plushogskolan.model.Team;
 import se.plushogskolan.model.User;
 import se.plushogskolan.model.WorkItem;
+import se.plushogskolan.model.WorkItemStatus;
+import se.plushogskolan.service.ServiceException;
 import se.plushogskolan.service.TeamService;
 import se.plushogskolan.service.UserService;
 import se.plushogskolan.service.WorkItemService;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 @Component
 @Path("users")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @Consumes(MediaType.APPLICATION_JSON)
 public final class UserResource {
 
@@ -98,12 +102,15 @@ public final class UserResource {
 	/**
 	 * uri: .../users?key=value
 	 * 
-	 * om man skickar flera parametrar metoden tar den första som matchar och struntar i 
-	 * de andra! notera att ordning är viktigt, dvs om ni skickar id=1&name=iman metoden 
-	 * tar id, men om ni skickar name=iman&id=1 den tar namnet och skiter i id:n! 
+	 * om man skickar flera parametrar metoden tar den första som matchar och
+	 * struntar i de andra! notera att ordning är viktigt, dvs om ni skickar
+	 * id=1&fname=iman metoden tar id, men om ni skickar fname=iman&id=1 den tar
+	 * id:n igen! ordning: id -> fname -> lname -> username -> usernumber ->
+	 * teamname. Om ingen parameter matchar då får man alla users.
 	 * 
-	 * @param id (id här är BaseEntitys autogenererad id, d.v.s location som
-	 * skickas tillbaka med Respond från POST)
+	 * @param id
+	 *            (id här är BaseEntitys autogenererad id, d.v.s location som
+	 *            skickas tillbaka med Respond från POST)
 	 * 
 	 * @param fname
 	 * @param lname
@@ -111,69 +118,115 @@ public final class UserResource {
 	 * @param usernumber
 	 * @param teamname
 	 * @return
+	 *
+	 * @GET public Response getUser(@QueryParam("id") Long
+	 *      id, @QueryParam("fname") String fname, @QueryParam("lname") String
+	 *      lname, @QueryParam("username") String
+	 *      username, @QueryParam("usernumber") String
+	 *      usernumber, @QueryParam("team") String teamname) {
+	 * 
+	 *      if (id != null) {
+	 * 
+	 *      User user = userService.getUser(id); if (user == null) { return
+	 *      Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(user).build();
+	 * 
+	 *      } else if (fname != null) {
+	 * 
+	 *      List<User> users = userService.getUserByFirstname(fname); if
+	 *      (users.size() == 0) { return
+	 *      Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(users).build();
+	 * 
+	 *      } else if (lname != null) {
+	 * 
+	 *      List<User> users = userService.getUserByLastname(lname); if
+	 *      (users.size() == 0) { return
+	 *      Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(users).build();
+	 * 
+	 *      } else if (username != null) {
+	 * 
+	 *      User user = userService.getUserByUsername(username); if (user ==
+	 *      null) { return Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(user).build();
+	 * 
+	 *      } else if (usernumber != null) {
+	 * 
+	 *      User user = userService.getUserByUsernumber(usernumber); if (user ==
+	 *      null) { return Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(user).build();
+	 * 
+	 *      } else if (teamname != null) {
+	 * 
+	 *      Team team = teamService.findByName(teamname); List<User> users =
+	 *      userService.getAllUsersInTeam(team); if (users.size() == 0) { return
+	 *      Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(users).build();
+	 * 
+	 *      } else {
+	 * 
+	 *      List<User> users = userService.getAllUsers(); if (users.size() == 0)
+	 *      { return Response.status(Status.NOT_FOUND).build(); } return
+	 *      Response.ok(users).build(); } }
+	 */
+
+	/**
+	 *
+	 * Url: /users?filter=<Type of search>&criteria=<Search criteria>
+	 * 
+	 * @param filter
+	 * @param criteria
+	 * @author Iman, Credit goes to Daniel!
+	 * @return
 	 */
 	@GET
-	public Response getUser(@QueryParam("id") Long id, @QueryParam("fname") String fname,
-			@QueryParam("lname") String lname, @QueryParam("username") String username,
-			@QueryParam("usernumber") String usernumber, @QueryParam("team") String teamname) {
+	public Response getUser(@QueryParam("filter") String filter, @QueryParam("criteria") String criteria) {
 
-		if (id != null) {
-			
-			User user = userService.getUser(id);
-			if (user == null) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(user).build();
-
-		} else if (fname != null) {
-			
-			List<User> users = userService.getUserByFirstname(fname);
-			if (users.size() == 0) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(users).build();
-
-		} else if (lname != null) {
-			
-			List<User> users = userService.getUserByLastname(lname);
-			if (users.size() == 0) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(users).build();
-
-		} else if (username != null) {
-			
-			User user = userService.getUserByUsername(username);
-			if (user == null) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(user).build();
-
-		} else if (usernumber != null) {
-			
-			User user = userService.getUserByUsernumber(usernumber);
-			if (user == null) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(user).build();
-
-		} else if (teamname != null) {
-			
-			Team team = teamService.findByName(teamname);
-			List<User> users = userService.getAllUsersInTeam(team);
-			if (users.size() == 0) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			return Response.ok(users).build();
-			
-		} else {
-			
-			List<User> users = userService.getAllUsers();
-			if (users.size() == 0) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
+		List<User> users = new ArrayList<>();
+		User user = null;
+		switch (filter) {
+		case "id":
+			user = userService.getUser(Long.parseLong(criteria));
+			if (user != null) users.add(user);
+			break;
+		case "username":
+			user = userService.getUserByUsername(criteria);
+			if (user != null) users.add(user);
+			break;
+		case "usernumber":
+			user = userService.getUserByUsernumber(criteria);
+			if (user != null) users.add(user);
+			break;
+		case "fname":
+			users = userService.getUserByFirstname(criteria);
+			break;
+		case "lname":
+			users = userService.getUserByLastname(criteria);
+			break;
+		case "teamname":
+			Team team = teamService.findByName(criteria);
+			users = userService.getAllUsersInTeam(team);
+			break;
+		default:
+			return Response.status(Status.BAD_REQUEST).entity("Query parameter format is wrong.").build();
+		}
+		if (users.size() == 0)
+			return Response.status(Status.NOT_FOUND).entity("User with given criteria doesn't exist.").build();
+		else {
 			return Response.ok(users).build();
 		}
+	}
+
+	@PUT
+	@Path("update/{id}")
+	public Response updateUser(@PathParam("id") Long id, User user) {
+		System.out.println(user);
+		User userHamtad = userService.getUser(id);
+		userHamtad.setFirstname(user.getFirstname());
+		userService.updateUser(userHamtad);
+		// JsonObject obj = new Gson().fromJson(body, JsonObject.class);
+		return Response.ok().build();
 	}
 
 	/**
@@ -185,15 +238,45 @@ public final class UserResource {
 	 */
 	@PUT
 	@Path("{id}")
-	public Response addWorkItemToUser(@PathParam("id") String stringId, String reqBody) {
+	public Response updateUser(@PathParam("id") String stringId, String reqBody) {
+
 		long id = Long.parseLong(stringId);
-		User user = userService.getUser(id);
 		JsonObject jobj = new Gson().fromJson(reqBody, JsonObject.class);
-		String workItemIdString = jobj.get("workItemId").toString();
-		workItemIdString = workItemIdString.substring(1, workItemIdString.length() - 1);
-		long workItemId = Long.parseLong(workItemIdString);
-		WorkItem workItem = workItemService.findById(workItemId);
-		workItemService.addWorkItemToUser(workItem, user);
-		return Response.ok().build();
+		User user = userService.getUser(id);
+
+		// addWorkItemToUser
+		if (jobj.has("workItemId")) {
+
+			System.out.println("workItem");
+
+			String workItemIdString = jobj.get("workItemId").toString();
+			// workItemIdString = workItemIdString.substring(1,
+			// workItemIdString.length() - 1);
+			long workItemId = Long.parseLong(workItemIdString);
+			WorkItem workItem = workItemService.findById(workItemId);
+			workItemService.addWorkItemToUser(workItem, user);
+			return Response.ok().build();
+
+		} else if (jobj.has("deactivate")) {
+
+			if (jobj.get("deactivate").equals("true"))
+				userService.deactivateUser(user);
+
+			return Response.ok().build();
+
+		} else if (jobj.has("activate")) {
+
+			if (jobj.get("activate").equals("true"))
+				userService.activateUser(user);
+
+			return Response.ok().build();
+
+		} else if (jobj.has("update")) {
+
+			return Response.ok().build();
+
+		} else {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
 	}
 }

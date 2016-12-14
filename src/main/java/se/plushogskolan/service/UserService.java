@@ -93,8 +93,9 @@ public class UserService {
 				throw new ServiceException(
 						"This team already has 10 users! (But it is allowed to have MAX 10 users in one team)");
 			}
+			
 		} else
-			throw new ServiceException("Username must be atleast 10 characters long!");
+			throw new ServiceException("Username must be at least 10 characters long!");
 	}
 
 	@Transactional
