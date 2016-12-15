@@ -58,9 +58,13 @@ public final class UserResource {
 	 * man får skicka "teamname" i http json body:n. Om redan finns ett team med
 	 * det här namnet hämtas teamet och skickas sätts till user. Om inget team
 	 * mead det här namnet finns då skapas ett team med namnet och sätts till
-	 * user.
-	 * 
-	 * @param size
+	 * user. Skicka en Json så här:
+	 * {
+	 *    	"firstname": "xxx",
+	 * 		"lastname": "xxx",
+	 * 		"username": "xxx", 
+	 * 		"teamname": "xxx"
+   	 * }
 	 */
 	@POST
 	public Response addUser(String body) {
