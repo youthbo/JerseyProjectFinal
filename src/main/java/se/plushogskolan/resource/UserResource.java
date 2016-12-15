@@ -56,8 +56,8 @@ public final class UserResource {
 	 * uri: .../users
 	 * 
 	 * man får skicka "teamname" i http json body:n. Om redan finns ett team med
-	 * det här namnet hämtas teamet och skickas sätts till user. Om inget team
-	 * mead det här namnet finns då skapas ett team med namnet och sätts till
+	 * det här namnet hämtas teamet och sätts till user. Om inget team
+	 * med det här namnet finns då skapas ett team med namnet och sätts till
 	 * user. Skicka en Json så här:
 	 * {
 	 *    	"firstname": "xxx",
@@ -85,21 +85,6 @@ public final class UserResource {
 	}
 
 	/**
-	 * uri: .../users/p hämtar alla users pagenerad
-	 * 
-	 * @param page
-	 * @param size
-	 */
-	@GET
-	@Path("p")
-	public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
-			@QueryParam("size") @DefaultValue("10") int size) {
-
-		List<User> users = userService.findAllUsers(page, size);
-		return Response.ok(users).build();
-	}
-
-	/**
 	 *
 	 * Uri: /users?filter=<Type of search>&criteria=<Search criteria>
 	 * if no filter specified, all users returned.
@@ -109,6 +94,7 @@ public final class UserResource {
 	 * @author Iman, Credit goes to Daniel!
 	 * @return
 	 */
+	
 	@GET
 	public Response getUser(@QueryParam("filter") String filter, @QueryParam("criteria") String criteria) {
 
@@ -151,6 +137,21 @@ public final class UserResource {
 		else {
 			return Response.ok(users).build();
 		}
+	}
+	
+	/**
+	 * uri: .../users/p hämtar alla users pagenerad
+	 * 
+	 * @param page
+	 * @param size
+	 */
+	@GET
+	@Path("p")
+	public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
+			@QueryParam("size") @DefaultValue("10") int size) {
+
+		List<User> users = userService.findAllUsers(page, size);
+		return Response.ok(users).build();
 	}
 
 	/**
