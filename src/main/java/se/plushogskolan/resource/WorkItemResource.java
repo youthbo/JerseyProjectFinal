@@ -48,6 +48,17 @@ public final class WorkItemResource {
     /**
      *
      * Url: /workitems?filter=<Type of search>&criteria=<Search criteria>
+     *
+     *     filter refers to the values that are in case of the switch statement
+     *     criteria refers to the criteria layed out in the project assignment,
+     *
+     *     status=started/unstarted etc
+     *     team = teamname
+     *     user = userId
+     *     text = text in description
+     *     Issue = issueId
+     *
+     *
      * @param filter
      * @param  criteria
      * @author Daniel
