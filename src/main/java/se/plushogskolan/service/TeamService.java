@@ -6,7 +6,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import se.plushogskolan.service.ServiceException;
@@ -17,7 +16,6 @@ import se.plushogskolan.repository.TeamRepository;
 import se.plushogskolan.repository.UserRepository;
 
 @Service
-@Component
 public class TeamService {
 	@Autowired
 	private TeamRepository teamRepository;
@@ -58,50 +56,52 @@ public class TeamService {
 		return team;
 	}
 
+	public Team findOne(Long id) {
+		Team team = teamRepository.findOne(id);
+		return team;
+	}
+
 	@Transactional
-	public void uppdateTeam(Long id, String newName, String newStatus) {
+	public void uppdateTeam(Long id, String newName) {
 		try {
 			Team team = teamRepository.findOne(id);
-			if (newName != null) {
-				Team newTeam = teamRepository.findByName(newName);
-				if (newTeam == null) {
-					team.setName(newName);
-				}
-			} else if (newStatus != null) {
-				team.setStatus(newStatus);
 
+			Team newTeam = teamRepository.findByName(newName);
+			if (newTeam == null) {
+				team.setName(newName);
+				teamRepository.save(team);
 			} else {
 				throw new ServiceException("Team with this teamname " + newName + " exists");
 
 			}
-			teamRepository.save(team);
+
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not update team", e);
 		}
 	}
 
 	@Transactional
-	public void deactivateTeam(String teamName) {
+	public void updateStatusTeam(Long id, Status status) {
 
 		try {
-			Team team = teamRepository.findByName(teamName);
+			Team team = teamRepository.findOne(id);
 			if (team != null) {
-				team.setStatus(Status.INACTIVE.toString());
+				team.setStatus(status.toString());
 				teamRepository.save(team);
 			} else {
 				throw new ServiceException("Team with this teamname NOT exists");
 			}
 
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not deactivate team: " + teamName, e);
+			throw new ServiceException("Could not deactivate team with id: " + id, e);
 		}
 
 	}
 
 	@Transactional
-	public void assigneUserToTeam(String teamName, Long userId) {
+	public void assigneUserToTeam(Long teamId, Long userId) {
 		try {
-			Team team = teamRepository.findByName(teamName);
+			Team team = teamRepository.findOne(teamId);
 			User user = userRepository.findOne(userId);
 			if ((team != null) && (user != null)) {
 				List<User> users = userRepository.findAllByTeam(team);
