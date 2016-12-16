@@ -80,7 +80,7 @@ public final class UserResource {
 		user.generateUsernumber();
 		user.setTeam(team);
 		userService.createUser(user);
-		URI location = uriInfo.getAbsolutePathBuilder().path(UserResource.class, "getUser").build(user.getId());
+		URI location = uriInfo.getAbsolutePathBuilder().path(UserResource.class, "getSingleUser").build(user.getId());
 		return Response.created(location).build();
 	}
 
@@ -154,6 +154,14 @@ public final class UserResource {
 		return Response.ok(users).build();
 	}
 
+	@GET
+	@Path("{id}")
+	public Response getSingleUser(@QueryParam("id") @DefaultValue("1") Long id) {
+
+		User user = userService.getUser(id);
+		return Response.ok(user).build();
+	}
+	
 	/**
 	 * Url: /users/123 
 	 * Method: Put 
