@@ -154,6 +154,13 @@ public final class UserResource {
 		return Response.ok(users).build();
 	}
 
+	/**
+	 * Just an easy way to get a single user based on its id
+	 * uri : /users/123
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@GET
 	@Path("{id}")
 	public Response getSingleUser(@QueryParam("id") @DefaultValue("1") Long id) {
