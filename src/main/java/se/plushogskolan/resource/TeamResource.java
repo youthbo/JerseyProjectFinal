@@ -28,8 +28,8 @@ import se.plushogskolan.service.TeamService;
 
 @Component
 @Path("teams")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 public final class TeamResource {
 
 	@Autowired

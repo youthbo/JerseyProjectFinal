@@ -64,6 +64,7 @@ public class UserService {
 		return userRepository.findAllByTeam(team);
 	}
 
+	
 	@Transactional
 	public User createUser(User user) {
 		if (user.getUsername().length() >= 10) {
@@ -121,5 +122,9 @@ public class UserService {
 
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+	
+	public User getUserByToken(String token){
+		return userRepository.findByToken(token);
 	}
 }

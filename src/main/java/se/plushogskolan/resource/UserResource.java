@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import se.plushogskolan.jersey.model.JerseyUser;
 import se.plushogskolan.model.Team;
 import se.plushogskolan.model.User;
 import se.plushogskolan.model.WorkItem;
@@ -67,21 +68,19 @@ public final class UserResource {
    	 * }
 	 */
 	@POST
-	public Response addUser(String body) {
-
-		Gson gson = new Gson();
-		Map m = gson.fromJson(body, Map.class);
-		String teamname = (String) m.get("teamname");
+	public Response addUser(JerseyUser jerseyUser) {
+		
+		String teamname = jerseyUser.getTeamname();
 		Team team = teamService.findByName(teamname);
 		if (team == null) {
 			team = new Team(teamname);
 		}
-		User user = gson.fromJson(body, User.class);
-		user.generateUsernumber();
-		user.setTeam(team);
-		userService.createUser(user);
-		URI location = uriInfo.getAbsolutePathBuilder().path(UserResource.class, "getSingleUser").build(user.getId());
+		User newUser = new User(jerseyUser.getFirstname(),jerseyUser.getLastname(),jerseyUser.getUsername(),jerseyUser.getPassword(),team);
+		newUser.generateUsernumber();
+		newUser = userService.createUser(newUser);
+		URI location = uriInfo.getAbsolutePathBuilder().path(UserResource.class, "getSingleUser").build(newUser.getId());
 		return Response.created(location).build();
+
 	}
 
 	/**
@@ -96,6 +95,7 @@ public final class UserResource {
 	 */
 	
 	@GET
+	@Secured
 	public Response getUser(@QueryParam("filter") String filter, @QueryParam("criteria") String criteria) {
 
 		List<User> users = new ArrayList<>();
@@ -147,6 +147,7 @@ public final class UserResource {
 	 */
 	@GET
 	@Path("p")
+	@Secured
 	public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
 			@QueryParam("size") @DefaultValue("10") int size) {
 
@@ -162,7 +163,9 @@ public final class UserResource {
 	 * @return
 	 */
 	@GET
+	
 	@Path("{id}")
+	@Secured
 	public Response getSingleUser(@QueryParam("id") @DefaultValue("1") Long id) {
 
 		User user = userService.getUser(id);
@@ -183,6 +186,7 @@ public final class UserResource {
 	 */
 	@PUT
 	@Path("{id}")
+	@Secured
 	public Response updateUser(@PathParam("id") String stringId, String reqBody) {
 
 		long id = Long.parseLong(stringId);

@@ -15,5 +15,5 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	List<User> findByLastname(String lastname);
 	List<User> findAllByTeam(Team team);
 	List<User> findAll();
-
+    User findByToken(String token);
 }

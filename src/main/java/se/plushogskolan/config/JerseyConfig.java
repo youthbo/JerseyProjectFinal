@@ -3,6 +3,8 @@ package se.plushogskolan.config;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
+import se.plushogskolan.resource.AuthenticationResource;
+import se.plushogskolan.resource.CustomerRequestFilter;
 import se.plushogskolan.resource.IssueResource;
 import se.plushogskolan.resource.TeamResource;
 import se.plushogskolan.resource.UserResource;
@@ -15,6 +17,8 @@ public class JerseyConfig extends ResourceConfig{
 			register(WorkItemResource.class);
 			register(TeamResource.class);
 			register(IssueResource.class);
+			register(AuthenticationResource.class);
+			register(CustomerRequestFilter.class);
 
 		}
 }
