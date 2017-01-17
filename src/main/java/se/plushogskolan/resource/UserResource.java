@@ -163,10 +163,9 @@ public final class UserResource {
 	 * @return
 	 */
 	@GET
-	
-	@Path("{id}")
 	@Secured
-	public Response getSingleUser(@QueryParam("id") @DefaultValue("1") Long id) {
+	@Path("{id}")
+	public Response getSingleUser(@PathParam("id") @DefaultValue("1") Long id) {
 
 		User user = userService.getUser(id);
 		return Response.ok(user).build();
