@@ -29,13 +29,13 @@ public class CustomerRequestFilter implements ContainerRequestFilter {
 		log.info("in request filter");
 		if (!requestContext.getHeaders().containsKey("Authorization")) {
 			log.warning("Authentication token misses.");
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Användaren behöver autentisera sig igen.").build());
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token misses.").build());
 			return;
 		}
 
 		String auth_token = requestContext.getHeaderString("Authorization");
 		if (!auth_token.contains("Bearer")){
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Användaren behöver autentisera sig igen.").build());
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token format is wrong.").build());
 			return;
 		}
 		
@@ -44,13 +44,13 @@ public class CustomerRequestFilter implements ContainerRequestFilter {
 		
 		if (user == null) {
 			log.info("Authentication token is: " + auth_token);
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Användaren behöver autentisera sig igen.").build());
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token is wrong.").build());
 			return;
 		}
 		String expirationTime = user.getExpirationTime();
 		if (Long.parseLong(expirationTime) < System.currentTimeMillis()){
 			log.info("Token is expired.");
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Användaren behöver autentisera sig igen.").build());
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token is expired.").build());
 			return;
 		}
 

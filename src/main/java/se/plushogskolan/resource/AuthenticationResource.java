@@ -1,6 +1,7 @@
 package se.plushogskolan.resource;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -36,6 +37,10 @@ public class AuthenticationResource {
 		String username = credentials.getUsername();
 		String password = credentials.getPassword();
 		User  user = userService.getUserByUsername(username);
+		if (user==null){
+			return Response.status(Status.UNAUTHORIZED).entity("User doesn't exist.").build();
+		}
+		
 		String storedSalt = user.getSalt();
 		String storedPassword = user.getPassword();
 		String hashedPassword = user.hashPassword(password.toCharArray(),Base64.decodeBase64(storedSalt));
@@ -48,7 +53,12 @@ public class AuthenticationResource {
 			userService.updateUser(user);
 			return Response.ok(token).build();
 		}
-		//URI location = uriInfo.getAbsolutePathBuilder().path(UserResource.class, "getSingleUser").build(newUser.getId());
+		
 		return Response.status(Status.UNAUTHORIZED).build();
+	}
+
+	private Object verifyPassword(User u) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
