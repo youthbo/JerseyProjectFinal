@@ -41,6 +41,7 @@ public class IssueResource {
      *  } 
 	 */
 	@POST
+	@Secured
 	public Response create(Issue issue){
 		try{
 		    issueService.createIssue(issue);
@@ -59,6 +60,7 @@ public class IssueResource {
      *  } 
 	 */
 	@PUT
+	@Secured
 	@Path("{id}")
 	public Response update(Issue issue,@PathParam("id") Long id){	
 		try{
