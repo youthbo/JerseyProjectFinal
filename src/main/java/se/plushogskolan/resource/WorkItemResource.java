@@ -37,6 +37,7 @@ import se.plushogskolan.service.WorkItemService;
 @Path("workitems")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Secured
 public final class WorkItemResource {
 
     @Autowired
