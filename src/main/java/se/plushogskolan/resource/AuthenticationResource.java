@@ -1,8 +1,5 @@
 package se.plushogskolan.resource;
 
-import java.net.URI;
-import java.util.Optional;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import se.plushogskolan.jersey.model.Credentials;
-import se.plushogskolan.jersey.model.JerseyUser;
 import se.plushogskolan.jersey.model.Token;
-import se.plushogskolan.model.Team;
 import se.plushogskolan.model.User;
 import se.plushogskolan.service.UserService;
 
@@ -57,8 +52,4 @@ public class AuthenticationResource {
 		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	private Object verifyPassword(User u) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

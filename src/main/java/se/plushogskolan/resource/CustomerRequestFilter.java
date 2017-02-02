@@ -13,6 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import se.plushogskolan.jersey.model.Token;
 import se.plushogskolan.model.User;
 import se.plushogskolan.service.UserService;
 
@@ -34,7 +35,7 @@ public class CustomerRequestFilter implements ContainerRequestFilter {
 		}
 
 		String auth_token = requestContext.getHeaderString("Authorization");
-		if (!auth_token.contains("Bearer")){
+		if (!auth_token.startsWith("Bearer")){
 			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token format is wrong.").build());
 			return;
 		}
@@ -50,7 +51,11 @@ public class CustomerRequestFilter implements ContainerRequestFilter {
 		String expirationTime = user.getExpirationTime();
 		if (Long.parseLong(expirationTime) < System.currentTimeMillis()){
 			log.info("Token is expired.");
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token is expired.").build());
+//			Token token  = new Token();
+//			user.setToken(token.getAccess_token());
+//			user.setExpirationTime(token.getExpiration_time());
+//			userService.updateUser(user);
+			//requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Authentication token is expired.").build());
 			return;
 		}
 

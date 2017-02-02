@@ -44,15 +44,6 @@ public final class User extends BaseEntity {
 	
 	public User() {}
 
-//	public User(String usernumber, String firstname, String lastname, String username) {
-//		this.firstname = firstname;
-//		this.lastname = lastname;
-//		this.username = username;
-//		this.team = null;
-//		this.status = Status.ACTIVE.toString();
-//		this.usernumber = generateUsernumber();
-//	}
-//	
 	public User(String firstname, String lastname, String username, Team team) {
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -65,7 +56,6 @@ public final class User extends BaseEntity {
 	public User(String firstname, String lastname, String username, String password,Team team) {
 		this(firstname,lastname,username,team);
 		this.salt = generateSalt();
-		//this.password = password;
 		this.password = hashPassword(password.toCharArray(),Base64.decodeBase64(salt));
 	}
     

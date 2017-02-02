@@ -30,6 +30,7 @@ import se.plushogskolan.service.TeamService;
 @Path("teams")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
+@Secured
 public final class TeamResource {
 
 	@Autowired
